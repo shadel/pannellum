@@ -636,17 +636,21 @@ function clearError() {
  * @param {MouseEvent} event - Right click location
  */
 function aboutMessage(event) {
-    var pos = mousePosition(event);
-    aboutMsg.style.left = pos.x + 'px';
-    aboutMsg.style.top = pos.y + 'px';
-    clearTimeout(aboutMessage.t1);
-    clearTimeout(aboutMessage.t2);
-    aboutMsg.style.display = 'block';
-    aboutMsg.style.opacity = 1;
-    aboutMessage.t1 = setTimeout(function() {aboutMsg.style.opacity = 0;}, 2000);
-    aboutMessage.t2 = setTimeout(function() {aboutMsg.style.display = 'none';}, 2500);
+    var pos = mousePosition(event);  
     event.preventDefault();
+	fireEvent('contextmenu', event);
 }
+/**
+ * Displays about message.
+ * @private
+ * @param {MouseEvent} event - Right click location
+ */
+function rightclickhotspot(event,hotspotId) {
+    
+    event.preventDefault();
+	fireEvent('hotspotrightclick', hotspotId);
+}
+
 
 /**
  * Calculate mouse position relative to top left of viewer container.
@@ -939,7 +943,7 @@ function onDocumentPointerMove(event) {
                 pointerCoordinates[i].clientY = event.clientY;
                 event.targetTouches = pointerCoordinates;
                 onDocumentTouchMove(event);
-                event.preventDefault();
+                //event.preventDefault();
                 return;
             }
         }
@@ -1668,6 +1672,9 @@ function createHotSpot(hs) {
     hs.yaw = Number(hs.yaw) || 0;
 
     var div = document.createElement('div');
+	div.addEventListener('contextmenu', function(e) {
+            rightclickhotspot(e, hs.id);
+        }, 'false');
     div.className = 'pnlm-hotspot-base'
     if (hs.cssClass)
         div.className += ' ' + hs.cssClass;
@@ -1731,7 +1738,7 @@ function createHotSpot(hs) {
 
     if (hs.createTooltipFunc) {
         hs.createTooltipFunc(div, hs.createTooltipArgs);
-    } else if (hs.text || hs.video || hs.image) {
+    } else if (hs.text || hs.html || hs.video || hs.image) {
         div.classList.add('pnlm-tooltip');
         div.appendChild(span);
         span.style.width = span.scrollWidth - 20 + 'px';
