@@ -1685,7 +1685,7 @@ function createHotSpot(hs) {
     if (hs.text)
         span.innerHTML = escapeHTML(hs.text);
     if (hs.html)
-        span.innerHTML = hs.html;
+        span.appendChild(hs.html);
 
     var a;
     if (hs.video) {
